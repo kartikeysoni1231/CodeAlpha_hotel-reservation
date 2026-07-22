@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Hotel Reservation System (Main)",
+            "request": "launch",
+            "mainClass": "Main",
+            "sourcePaths": ["src"]
+        },
+        {
+            "type": "java",
+            "name": "Backend Integration Test",
+            "request": "launch",
+            "mainClass": "TestBackend",
+            "sourcePaths": ["src"]
+        }
+    ]
+}

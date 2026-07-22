@@ -1,0 +1,13 @@
+# Java compilation outputs
+bin/
+*.class
+
+# Temporary IDE files
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+
+# Local guest database changes (ignores guest records, but keeps rooms.txt template)
+reservations.txt
