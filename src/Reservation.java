@@ -1,28 +1,17 @@
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-/**
- * Reservation.java
- * 
- * Represents a single guest booking in the hotel reservation system.
- * This class tracks booking details including guest credentials, room association,
- * check-in/check-out dates, dynamically calculated costs, payment confirmation, 
- * and selected payment method (Cash, Card, UPI). It also contains CSV serialization methods.
- */
 public class Reservation {
     private String reservationId;
-    private Room room; // Reference to the room being booked
+    private Room room;
     private String guestName;
     private String contactNumber;
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
     private double totalPrice;
     private boolean isPaid;
-    private String paymentMethod; // "None", "Cash", "Card", "UPI"
+    private String paymentMethod;
 
-    /**
-     * Constructor to initialize a Reservation.
-     */
     public Reservation(String reservationId, Room room, String guestName, String contactNumber,
                        LocalDate checkInDate, LocalDate checkOutDate, double totalPrice,
                        boolean isPaid, String paymentMethod) {
@@ -37,30 +26,16 @@ public class Reservation {
         this.paymentMethod = paymentMethod;
     }
 
-    // --- Business Logic Methods ---
-
-    /**
-     * Calculates the total price of a booking based on the room rate and stay duration.
-     * If check-in and check-out are on the same day (or invalid chronological order),
-     * a minimum duration of 1 night is applied.
-     * 
-     * @param room     The room being booked
-     * @param checkIn  The starting date of stay
-     * @param checkOut The ending date of stay
-     * @return The calculated total price
-     */
     public static double calculateTotalPrice(Room room, LocalDate checkIn, LocalDate checkOut) {
         if (room == null || checkIn == null || checkOut == null) {
             return 0.0;
         }
         long nights = ChronoUnit.DAYS.between(checkIn, checkOut);
         if (nights <= 0) {
-            nights = 1; // 1-night minimum stay policy
+            nights = 1;
         }
         return nights * room.getPrice();
     }
-
-    // --- Getters and Setters ---
 
     public String getReservationId() {
         return reservationId;
@@ -134,16 +109,10 @@ public class Reservation {
         this.paymentMethod = paymentMethod;
     }
 
-    // --- Persistence Methods ---
-
-    /**
-     * Converts reservation state to a CSV line.
-     * Format: reservationId,roomNumber,guestName,contactNumber,checkInDate,checkOutDate,totalPrice,isPaid,paymentMethod
-     */
     public String toCsvString() {
         return reservationId + "," +
                room.getRoomNumber() + "," +
-               guestName.replace(",", ";") + "," + // Prevent breaking CSV split on comma
+               guestName.replace(",", ";") + "," +
                contactNumber.replace(",", ";") + "," +
                checkInDate + "," +
                checkOutDate + "," +
@@ -152,13 +121,6 @@ public class Reservation {
                paymentMethod;
     }
 
-    /**
-     * Generates a Reservation object from CSV string and a list of existing rooms to associate the proper Room object.
-     * 
-     * @param csvLine The CSV formatted record
-     * @param rooms   The list of existing rooms in the hotel
-     * @return The populated Reservation object, or null if invalid
-     */
     public static Reservation fromCsvString(String csvLine, java.util.List<Room> rooms) {
         try {
             String[] parts = csvLine.split(",");
@@ -173,7 +135,6 @@ public class Reservation {
                 boolean isPaid = Boolean.parseBoolean(parts[7].trim());
                 String paymentMethod = parts[8].trim();
 
-                // Find the associated Room object
                 Room room = null;
                 for (Room r : rooms) {
                     if (r.getRoomNumber().equals(roomNumber)) {
@@ -182,10 +143,8 @@ public class Reservation {
                     }
                 }
 
-                // If the room doesn't exist, we construct a dummy room or log error
                 if (room == null) {
                     System.err.println("Warning: Room #" + roomNumber + " not found for reservation " + reservationId);
-                    // Create a placeholder room to avoid NullPointerExceptions
                     room = new Room(roomNumber, "Unknown", 0.0, false);
                 }
 

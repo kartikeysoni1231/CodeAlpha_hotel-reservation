@@ -1,34 +1,15 @@
-/**
- * Room.java
- * 
- * Represents a single room in the hotel.
- * This class holds the attributes of a room: its number, type, nightly price, 
- * and whether it is currently available for booking. It also includes helper methods
- * to convert the Room object to and from a comma-separated values (CSV) format 
- * for text-file storage.
- */
 public class Room {
     private String roomNumber;
-    private String roomType; // Expected types: "Standard", "Deluxe", "Suite"
+    private String roomType;
     private double price;
     private boolean isAvailable;
 
-    /**
-     * Constructor to initialize a Room object.
-     * 
-     * @param roomNumber  The unique number/identifier of the room (e.g., "101")
-     * @param roomType    The category of the room ("Standard", "Deluxe", "Suite")
-     * @param price       The nightly rate of the room
-     * @param isAvailable The current availability status of the room
-     */
     public Room(String roomNumber, String roomType, double price, boolean isAvailable) {
         this.roomNumber = roomNumber;
         this.roomType = roomType;
         this.price = price;
         this.isAvailable = isAvailable;
     }
-
-    // --- Getters and Setters ---
 
     public String getRoomNumber() {
         return roomNumber;
@@ -62,23 +43,10 @@ public class Room {
         isAvailable = available;
     }
 
-    /**
-     * Converts the Room object details into a CSV line format.
-     * Used for saving room records to a text file.
-     * 
-     * @return CSV formatted string representation of the room
-     */
     public String toCsvString() {
         return roomNumber + "," + roomType + "," + price + "," + isAvailable;
     }
 
-    /**
-     * Creates a Room object from a CSV line.
-     * Used when reading room records from the saved text file.
-     * 
-     * @param csvLine The CSV formatted string from the text file
-     * @return A Room object populated with the CSV data, or null if invalid
-     */
     public static Room fromCsvString(String csvLine) {
         try {
             String[] parts = csvLine.split(",");

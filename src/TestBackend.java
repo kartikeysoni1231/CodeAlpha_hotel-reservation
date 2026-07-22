@@ -1,19 +1,11 @@
 import java.time.LocalDate;
 
-/**
- * TestBackend.java
- * 
- * An integration test runner that validates the business logic and text-file persistence
- * of the Hotel Reservation System without launching the Swing GUI. This ensures
- * verification can happen successfully in a headless CLI environment.
- */
 public class TestBackend {
     public static void main(String[] args) {
         System.out.println("==================================================");
         System.out.println("Starting Hotel Reservation Backend Integration Test");
         System.out.println("==================================================");
 
-        // 1. Initialize Hotel - should seed rooms.txt if not present
         System.out.println("\n[Test 1] Initializing Hotel service...");
         Hotel hotel = new Hotel();
         int roomCount = hotel.getAllRooms().size();
@@ -24,7 +16,6 @@ public class TestBackend {
             System.out.println("-> FAILURE: Room count is " + roomCount + " (expected 10).");
         }
 
-        // 2. View Available Rooms
         System.out.println("\n[Test 2] Viewing available rooms...");
         int initialAvailCount = hotel.getAvailableRooms().size();
         System.out.println("Available rooms: " + initialAvailCount);
@@ -34,7 +25,6 @@ public class TestBackend {
             System.out.println("-> FAILURE: Available room count is " + initialAvailCount);
         }
 
-        // 3. Search Rooms by Type
         System.out.println("\n[Test 3] Searching standard and suite rooms...");
         int standardRooms = hotel.searchRooms("Standard", false).size();
         int suites = hotel.searchRooms("Suite", false).size();
@@ -45,7 +35,6 @@ public class TestBackend {
             System.out.println("-> FAILURE: Search counts standard=" + standardRooms + ", suites=" + suites);
         }
 
-        // 4. Book a Room
         System.out.println("\n[Test 4] Booking Room 101...");
         Room room101 = hotel.searchRooms("Standard", true).get(0);
         LocalDate checkIn = LocalDate.now().plusDays(1);
@@ -57,13 +46,12 @@ public class TestBackend {
         System.out.println("Stay Duration: " + java.time.temporal.ChronoUnit.DAYS.between(checkIn, checkOut) + " nights");
         System.out.println("Total Price calculated: $" + res.getTotalPrice());
 
-        if (!room101.isAvailable() && res.getTotalPrice() == 160.0) { // $80 * 2 nights
+        if (!room101.isAvailable() && res.getTotalPrice() == 160.0) {
             System.out.println("-> SUCCESS: Room marked booked and pricing calculates correctly.");
         } else {
             System.out.println("-> FAILURE: Booking logic error. Price=" + res.getTotalPrice() + ", Avail=" + room101.isAvailable());
         }
 
-        // 5. Payment Simulation
         System.out.println("\n[Test 5] Simulating Payment (UPI)...");
         System.out.println("Initial paid status: " + res.isPaid() + " (Method: " + res.getPaymentMethod() + ")");
         hotel.processPayment(res.getReservationId(), "UPI");
@@ -74,7 +62,6 @@ public class TestBackend {
             System.out.println("-> FAILURE: Payment processing failed.");
         }
 
-        // 6. Persistence Verification (Reload from files)
         System.out.println("\n[Test 6] Reloading database from text files to test persistence...");
         Hotel reloadedHotel = new Hotel();
         int loadedBookings = reloadedHotel.getAllReservations().size();
@@ -95,13 +82,11 @@ public class TestBackend {
             System.out.println("-> FAILURE: Reloaded bookings size is " + loadedBookings + " (expected 1)");
         }
 
-        // 7. Cancel Reservation
         System.out.println("\n[Test 7] Canceling booking to restore availability...");
         boolean cancelSuccess = reloadedHotel.cancelReservation(res.getReservationId());
         System.out.println("Cancellation result: " + cancelSuccess);
         System.out.println("Active bookings size: " + reloadedHotel.getAllReservations().size());
         
-        // Find room 101 in reloaded database
         Room reloaded101 = null;
         for (Room r : reloadedHotel.getAllRooms()) {
             if (r.getRoomNumber().equals("101")) {
